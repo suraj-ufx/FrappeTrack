@@ -9,5 +9,17 @@ Once tracking is stopped, the recorded time, selected task details, and captured
 FrappeTrack is designed for teams and organizations that use ERPNext and need a seamless, secure, and efficient way to monitor task-based work time, with future support for activity tracking and productivity insights.
 
 --- 
+
 ## High-Level Architecture
 ![FrappeTrack HLD](Frappe%20Tracker/high-level-arch.png)
+---
+
+## Backend API
+- Authentication validation APIs
+- Task & Timesheet fetch APIs
+- Timesheet creation/update API
+- Screenshot upload & attachment handling
+- 
+---
+
+## Frontend (User Interface)
