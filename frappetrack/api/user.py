@@ -1,39 +1,36 @@
 import frappe
-from frappetrack.utils.auth_utils import get_logged_in_user
+from frappe import _
 
-
-@frappe.whitelist(allow_guest=True)
-def get_profile():
+@frappe.whitelist(allow_guest=False)
+def get_employee_profile():
     """
-    Endpoint to get user's / employee profile details.
+    Returns the employee details of the logged-in user.
     """
     try:
-        user_id = get_logged_in_user()
-
-        user = frappe.get_doc("User", user_id)
+        user = frappe.session.user
 
         employee = frappe.db.get_value(
             "Employee",
-            {"user_id": user.name},
-            ["name", "designation", "date_of_birth", "image"],
+            {"user_id": user},
+            ["name", "designation", "image"],
             as_dict=True
         )
 
         if employee and employee.get("image"):
             employee["image"] = frappe.utils.get_url(employee["image"])
-            
+
         return {
             "success": True,
             "user": {
-                "name": user.full_name,
-                "email": user.email,
-                "username": user.name,
+                "name": frappe.get_value("User", user, "full_name"),
+                "email": frappe.get_value("User", user, "email"),
                 "employee": employee
             }
         }
 
-    except Exception:
+    except Exception as e:
         return {
             "success": False,
-            "message": "Unable to fetch profile"
+            "message": "Unable to fetch profile",
+            "error": str(e)
         }

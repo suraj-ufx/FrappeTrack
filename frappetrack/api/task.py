@@ -2,12 +2,14 @@ import frappe
 from frappe import _
 
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist(allow_guest=False)
 def get_task_list()-> dict:
     """
     Returns a list of open tasks.
     """
     try:
+        user = frappe.session.user
+
         tasks = frappe.db.get_list("Task", 
             fields=["name", "subject"], 
             filters={"status": "Open"}
@@ -33,12 +35,14 @@ def get_task_list()-> dict:
         }
 
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist(allow_guest=False)
 def get_task_by_project(project_id: str):
     """
     Fetches a list of 'Open' tasks associated with a specific Project ID.    
     """
     try:
+        user = frappe.session.user
+        
         tasks = frappe.db.get_list("Task",
             fields=["name", "subject", "status"],
             filters={

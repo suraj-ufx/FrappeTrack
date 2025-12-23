@@ -47,4 +47,4 @@ FrappeTrack is designed for teams and organizations that use ERPNext and need a 
 
 3. Task & Productivity
     - [X] GET/POST /tasks – Task API
-    - [X] POST /timetracker – Timetracker API (In Progress)
+    - [ ] POST /timetracker – Timetracker API (In Progress)

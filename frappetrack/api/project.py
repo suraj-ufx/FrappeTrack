@@ -1,13 +1,15 @@
 import frappe
 from frappe import _
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist(allow_guest=False)
 def get_projects_list():
     """
     Endpoint to get the list of projects with filter status equal to 'Open'.
     Returns a dictionary with status, data, and message.
     """
     try:
+        user = frappe.session.user
+        
         projects = frappe.db.get_list("Project", 
             fields=["name", "project_name"], 
             filters={"status": "Open"}
