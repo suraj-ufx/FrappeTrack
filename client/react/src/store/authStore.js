@@ -15,7 +15,7 @@ export const useAuthStore = create((set) => ({
         try {
             const response = await axiosInstance.post(
                 "/api/method/frappetrack.api.auth_api.login_custom",
-                { username, password }
+                { username, password }, { withCredentials: true }
             );
 
             console.log("Login response:", response.data);
@@ -51,14 +51,21 @@ export const useAuthStore = create((set) => ({
 
     fetchProfile: async () => {
         try {
-            console.log("Cookies before profile fetch:", document.cookie);
+            // ⚠️ This will almost always be empty (HttpOnly cookie)
+            console.log("document.cookie:", document.cookie);
 
-            const { data } = await axios.post(
-                "/api/method/frappetrack.api.user.get_employee_profile",
-                {},
-                { withCredentials: true }
+            const res = await fetch(
+                "http://192.168.0.138/api/method/frappetrack.api.user.get_employee_profile",
+                {
+                    method: "GET",
+                    credentials: "include", // ⭐ THIS sends cookies
+                    headers: {
+                        "Accept": "application/json",
+                    },
+                }
             );
 
+            const data = await res.json();
             console.log("Profile response:", data);
 
             if (data?.message?.success) {
@@ -70,6 +77,7 @@ export const useAuthStore = create((set) => ({
             console.error("Profile fetch failed:", err);
         }
     },
+
 
     logout: async () => {
         set({ user: null, isAuthenticated: false });
