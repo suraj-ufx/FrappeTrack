@@ -12,5 +12,9 @@
   "description": "",
   "devDependencies": {
     "electron": "^39.2.7"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "http-proxy-middleware": "^3.0.5"
   }
 }

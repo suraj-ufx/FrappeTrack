@@ -20,8 +20,8 @@ export default function Login() {
 
     console.log("Login response from API:", loginResponse);
 
-    if (loginResponse.message.success && window.electronAPI) {
-      await window.electronAPI.setLogin(loginResponse);
+    if (loginResponse.message.success ) {
+      // await window.electronAPI.setLogin(loginResponse);
       navigate('/user-profile')
     }
   }

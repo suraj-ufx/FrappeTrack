@@ -1,6 +1,14 @@
-const { contextBridge, ipcRenderer } = require("electron");
+const { contextBridge } = require('electron');
 
-contextBridge.exposeInMainWorld("electronAPI", {
-  setLogin: (loginResponse) => ipcRenderer.invoke("login", loginResponse),
-  onAuthSuccess: (callback) => ipcRenderer.on("auth-success", callback),
+let sid = null;
+
+contextBridge.exposeInMainWorld('auth', {
+  setSid: (value) => {
+    sid = value;
+    console.log('[preload] sid set:', sid);
+  },
+  getSid: () => {
+    console.log('[preload] sid get:', sid);
+    return sid;
+  }
 });

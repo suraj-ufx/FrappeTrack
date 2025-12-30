@@ -6,14 +6,11 @@ import { Toaster } from "react-hot-toast";
 import { useEffect } from "react";
 
 function App() {
-  useEffect(() => {
-    if (window.electronAPI) {
-      window.electronAPI.onAuthSuccess(() => {
-        console.log("Electron auth event received");
-      });
-    }
-  }, []);
-
+ useEffect(() => {
+  console.log("electronAPI available?", window.electronAPI);
+  console.log("setCookie function?", typeof window.electronAPI?.setCookie);
+}, []);
+console.log("react is executing")
   return (
     <>
       <Routes>
