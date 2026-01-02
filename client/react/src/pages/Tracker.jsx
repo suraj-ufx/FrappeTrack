@@ -1,8 +1,10 @@
-import { useEffect } from "react"
+import { useEffect, useRef, useState } from "react";
 import { useAuthStore } from "../store/authStore"
-import { useState } from "react"
 
 const Tracker = () => {
+  const [seconds, setSeconds] = useState(0);
+  const [screenshots, setScreenshots] = useState([]);
+
     const { getProjects, getTask, projects, task } = useAuthStore()
     const [selectedProject, setSelectedProject] = useState(null)
     
@@ -20,6 +22,93 @@ const Tracker = () => {
         await getTask(value)
 
     }
+  
+  const timerIntervalRef = useRef(null);
+  const screenshotTimeoutRef = useRef(null);
+
+  const sessionIdRef = useRef(1);
+  const imageIndexRef = useRef(1);
+
+  // ---------------- TIMER ----------------
+  const formatTime = (secs) => {
+    const h = String(Math.floor(secs / 3600)).padStart(2, "0");
+    const m = String(Math.floor((secs % 3600) / 60)).padStart(2, "0");
+    const s = String(secs % 60).padStart(2, "0");
+    return `${h}:${m}:${s}`;
+  };
+
+  // ------------- RANDOM INTERVAL ----------
+  const getRandomDelay = () => {
+    const min = 3 * 60 * 1000;   // 3 min
+    const max = 10 * 60 * 1000;  // 10 min
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  };
+
+  // ------------ CAPTURE -------------------
+  const captureScreenshot = async () => {
+    if (!window.electronAPI?.captureScreen) {
+      console.error("Electron API not available!");
+      return;
+    }
+
+    const imgData = await window.electronAPI.captureScreen({
+      sessionId: sessionIdRef.current,
+      imageIndex: imageIndexRef.current,
+    });
+
+    if (imgData) {
+      setScreenshots((prev) => [...prev, imgData]);
+      imageIndexRef.current += 1;
+    }
+  };
+
+  // ----------- SCREENSHOT LOOP ------------
+  const scheduleScreenshot = () => {
+    const delay = getRandomDelay();
+
+    screenshotTimeoutRef.current = setTimeout(async () => {
+      await captureScreenshot();
+      scheduleScreenshot(); // schedule next
+    }, delay);
+  };
+
+  // ------------ BUTTONS ------------------
+  const handleStart = () => {
+    console.log("Start clicked");
+
+    if (!timerIntervalRef.current) {
+      timerIntervalRef.current = setInterval(() => {
+        setSeconds((prev) => prev + 1);
+      }, 1000);
+
+      scheduleScreenshot();
+    }
+  };
+
+  const handlePause = () => {
+    clearInterval(timerIntervalRef.current);
+    clearTimeout(screenshotTimeoutRef.current);
+
+    timerIntervalRef.current = null;
+    screenshotTimeoutRef.current = null;
+  };
+
+  const handleStop = () => {
+    handlePause();
+    setSeconds(0);
+    setScreenshots([]);
+    sessionIdRef.current += 1;
+    imageIndexRef.current = 1;
+  };
+
+  // ------------- CLEANUP -----------------
+  useEffect(() => {
+    return () => {
+      clearInterval(timerIntervalRef.current);
+      clearTimeout(screenshotTimeoutRef.current);
+    };
+  }, []);
+  
     return (
         <div className=" bg-gray-100 flex items-center justify-center min-h-screen">
 
@@ -59,42 +148,45 @@ const Tracker = () => {
                 </div>
 
                 <div className="flex justify-around gap-3 mb-5">
-                    <button
-                        id="start"
-                        className="w-20 h-20 rounded-full bg-green-200 border border-gray-700 font-bold shadow-md
-               hover:-translate-y-0.5 hover:shadow-lg transition">
-                        Start
-                    </button>
+                  <button
+                    onClick={handleStart}
+                    className="w-20 h-20 rounded-full bg-green-200 border font-bold shadow-md hover:-translate-y-0.5 hover:shadow-lg transition">
+                    Start
+                  </button>
 
-                    <button
-                        id="pause"
-                        className="w-20 h-20 rounded-full bg-yellow-200 border border-gray-700 font-bold shadow-md
-               hover:-translate-y-0.5 hover:shadow-lg transition">
-                        Pause
-                    </button>
+                  <button
+                    onClick={handlePause}
+                    className="w-20 h-20 rounded-full bg-yellow-200 border font-bold shadow-md hover:-translate-y-0.5 hover:shadow-lg transition">
+                    Pause
+                  </button>
 
-                    <button
-                        id="stop"
-                        className="w-20 h-20 rounded-full bg-red-200 border border-gray-700 font-bold shadow-md
-               hover:-translate-y-0.5 hover:shadow-lg transition">
-                        Stop
-                    </button>
+                  <button
+                    onClick={handleStop}
+                    className="w-20 h-20 rounded-full bg-red-200 border font-bold shadow-md hover:-translate-y-0.5 hover:shadow-lg transition">
+                    Stop
+                  </button>
                 </div>
 
-                <div
-                    id="timer"
-                    className="mb-5 bg-white p-4 text-3xl text-center rounded-xl shadow-inner font-mono">
-                    00:00:00
+                <div className="mb-5 bg-white p-4 text-3xl text-center rounded-xl shadow-inner font-mono">
+                  {formatTime(seconds)}
                 </div>
 
-                <h4 className="block text-gray-700 font-medium mb-2">Screenshot Preview</h4>
-                <div id="screenshots" className="flex flex-wrap gap-2">
+                <h4 className="text-gray-700 font-medium mb-2">Screenshot Preview</h4>
+
+                <div className="flex flex-wrap gap-2">
+                  {screenshots.map((src, index) => (
+                    <img
+                      key={index}
+                      src={src}
+                      alt="screenshot"
+                      className="w-[120px] rounded-lg shadow-md"
+                    />
+                  ))}
                 </div>
 
             </div>
-
         </div>
-    )
-}
+  );
+};
 
-export default Tracker
+export default Tracker;
