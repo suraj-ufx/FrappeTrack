@@ -5,24 +5,24 @@ const Tracker = () => {
   const [seconds, setSeconds] = useState(0);
   const [screenshots, setScreenshots] = useState([]);
 
-    const { getProjects, getTask, projects, task } = useAuthStore()
-    const [selectedProject, setSelectedProject] = useState(null)
-    
-    useEffect(()=>{
-        getProjects()
-    },[])
+  const { getProjects, getTask, projects, task } = useAuthStore()
+  const [selectedProject, setSelectedProject] = useState(null)
 
-   
-    console.log(projects)
-    console.log(task)
-    async function handleProjectChange(e) {
-        const value = e.target.value;
-        console.log(value);
+  useEffect(() => {
+    getProjects()
+  }, [])
 
-        await getTask(value)
 
-    }
-  
+  console.log(projects)
+  console.log(task)
+  async function handleProjectChange(e) {
+    const value = e.target.value;
+    console.log(value);
+
+    await getTask(value)
+
+  }
+
   const timerIntervalRef = useRef(null);
   const screenshotTimeoutRef = useRef(null);
 
@@ -108,84 +108,101 @@ const Tracker = () => {
       clearTimeout(screenshotTimeoutRef.current);
     };
   }, []);
-  
-    return (
-        <div className=" bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100 flex items-center justify-center min-h-screen">
 
-            <div className="bg-white p-5 w-full max-w-md rounded-2xl shadow-lg">
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100 flex items-center justify-center px-4">
 
-                <div className="text-center mb-5">
-                    <h2 className="text-2xl font-bold text-gray-800">Welcome</h2>
-                    <h2 id="username" className="text-2xl font-bold text-gray-800"></h2>
-                </div>
+      <div className="bg-white w-full max-w-5xl rounded-3xl shadow-xl p-6 md:p-8">
 
-                <div className="flex gap-2 mb-5">
-                    <select
-                    value={selectedProject}
-                    onChange={handleProjectChange}
-                        className="flex-1 h-9 rounded-lg border border-gray-300 px-3 text-sm bg-white shadow-sm focus:outline-none focus:border-gray-600">
-                        
-                        <option value="">Select project</option>
-                        {projects.map((project) => (
-                             <option key={project.name} value={project.name}>{project.project_name}</option>
-                        ))}
-
-                    </select>
-
-                    <select
-                        className="flex-1 h-9 rounded-lg border border-gray-300 px-3 text-sm bg-white shadow-sm focus:outline-none focus:border-gray-600">
-                        <option value="">Select project</option>
-                        {task.map((t) => {
-                            return <option key={t.name} value={t.name}>{t.subject}</option>
-                        })}
-                    </select>
-
-                    <select
-                        className="flex-1 h-9 rounded-lg border border-gray-300 px-3 text-sm bg-white shadow-sm focus:outline-none focus:border-gray-600">
-                        <option value="">Timesheet</option>
-                        <option value="">Create timesheet</option>
-                    </select>
-                </div>
-
-                <div className="flex justify-around gap-3 mb-5">
-                  <button
-                    onClick={handleStart}
-                    className="w-20 h-20 rounded-full bg-green-200 border font-bold shadow-md hover:-translate-y-0.5 hover:shadow-lg transition">
-                    Start
-                  </button>
-
-                  <button
-                    onClick={handlePause}
-                    className="w-20 h-20 rounded-full bg-yellow-200 border font-bold shadow-md hover:-translate-y-0.5 hover:shadow-lg transition">
-                    Pause
-                  </button>
-
-                  <button
-                    onClick={handleStop}
-                    className="w-20 h-20 rounded-full bg-red-200 border font-bold shadow-md hover:-translate-y-0.5 hover:shadow-lg transition">
-                    Stop
-                  </button>
-                </div>
-
-                <div className="mb-5 bg-white p-4 text-3xl text-center rounded-xl shadow-inner font-mono">
-                  {formatTime(seconds)}
-                </div>
-
-                <h4 className="text-gray-700 font-medium mb-2">Screenshot Preview</h4>
-
-                <div className="flex flex-wrap gap-2">
-                  {screenshots.map((src, index) => (
-                    <img
-                      key={index}
-                      src={src}
-                      alt="screenshot"
-                      className="w-[120px] rounded-lg shadow-md"
-                    />
-                  ))}
-                </div>
-
-            </div>
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-gray-800">Welcome</h2>
+          <h2 id="username" className="text-xl text-gray-500 mt-1"></h2>
         </div>
+
+        {/* Controls */}
+        <div className="mb-8">
+          {/* Selects */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+            <select
+              value={selectedProject}
+              onChange={handleProjectChange}
+              className="h-10 rounded-xl border border-gray-300 px-4 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            >
+              <option value="">Select project</option>
+              {projects.map(project => (
+                <option key={project.name} value={project.name}>
+                  {project.project_name}
+                </option>
+              ))}
+            </select>
+
+            <select className="h-10 rounded-xl border border-gray-300 px-4 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400">
+              <option value="">Select task</option>
+              {task.map(t => (
+                <option key={t.name} value={t.name}>
+                  {t.subject}
+                </option>
+              ))}
+            </select>
+
+            <select className="h-10 rounded-xl border border-gray-300 px-4 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400">
+              <option value="">Timesheet</option>
+              <option value="">Create timesheet</option>
+            </select>
+          </div>
+
+          {/* Buttons */}
+          <div className="flex justify-center gap-6 mb-6">
+            <button
+              onClick={handleStart}
+              className="w-24 h-24 rounded-full bg-green-500 text-white font-semibold shadow-lg hover:scale-105 transition"
+            >
+              Start
+            </button>
+
+            <button
+              onClick={handlePause}
+              className="w-24 h-24 rounded-full bg-yellow-400 text-white font-semibold shadow-lg hover:scale-105 transition"
+            >
+              Pause
+            </button>
+
+            <button
+              onClick={handleStop}
+              className="w-24 h-24 rounded-full bg-red-500 text-white font-semibold shadow-lg hover:scale-105 transition"
+            >
+              Stop
+            </button>
+          </div>
+
+          {/* Timer */}
+          <div className="bg-gray-100 rounded-2xl p-6 text-4xl text-center font-mono shadow-inner">
+            {formatTime(seconds)}
+          </div>
+        </div>
+
+        {/* Screenshot Preview - Bottom */}
+        <div>
+          <h4 className="text-gray-700 font-semibold mb-4">
+            Screenshot Preview
+          </h4>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            {screenshots.map((src, index) => (
+              <img
+                key={index}
+                src={src}
+                alt="screenshot"
+                className="rounded-xl shadow-md hover:scale-105 transition"
+              />
+            ))}
+          </div>
+        </div>
+
+      </div>
+    </div>
+
   );
 };
 
