@@ -9,6 +9,7 @@ export const useAuthStore = create((set) => ({
     error: null,
     projects: [],
     task:[],
+    timeSheet:[],
 
     // login: async (apiKey, apiSecret) => {
     //     set({ authLoading: true, error: null });
@@ -137,6 +138,37 @@ export const useAuthStore = create((set) => ({
             if (data?.message?.status) {
                 set({ task: data.message.data });
                 toast.success("Task fetched successfully")
+                return true;
+            }
+            toast.error("Unable to fetch tasks")
+            return false
+        } catch (err) {
+            console.error("Projects fetch failed:", err);
+        }
+    },
+    getTimeSheetList: async (task_id) => {
+        console.log("hitting timesheet")
+        try {
+            // apiSecret
+            const [{ apiKey }, {apiSecret}] = JSON.parse(localStorage.getItem("creds"));
+            
+            console.log(apiKey, apiSecret)
+
+            const res = await axiosInstance.get(
+                `api/method/frappetrack.api.timesheet.get_timesheet_by_task?task_id=${task_id}`,
+                {
+                    headers: {
+                        'Authorization': `token ${apiKey}:${apiSecret}`,
+                    },
+                }
+            );
+
+            const data = res.data;
+            console.log("Timesheet response:", data);
+
+            if (data?.message?.status) {
+                set({ timeSheet: data.message.data });
+                toast.success("Time fetched successfully")
                 return true;
             }
             toast.error("Unable to fetch tasks")
