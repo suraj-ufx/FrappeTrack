@@ -110,7 +110,7 @@ const Tracker = () => {
   }, []);
   
     return (
-        <div className=" bg-gray-100 flex items-center justify-center min-h-screen">
+        <div className=" bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100 flex items-center justify-center min-h-screen">
 
             <div className="bg-white p-5 w-full max-w-md rounded-2xl shadow-lg">
 
