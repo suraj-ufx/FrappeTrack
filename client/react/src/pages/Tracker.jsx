@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useAuthStore } from "../store/authStore"
+import { toast } from "react-hot-toast";
 
 const Tracker = () => {
 <<<<<<< HEAD
@@ -55,11 +56,13 @@ const Tracker = () => {
   const [seconds, setSeconds] = useState(0);
   const [screenshots, setScreenshots] = useState([]);
 
-
   const { getProjects, getTask, getTimeSheetList, projects, task, timeSheet } = useAuthStore()
   const [selectedProject, setSelectedProject] = useState(null);
   const [taskByProject, setTaskByProject] = useState(null)
   const [timeSheetValue, setTimeSheetValue] = useState(null)
+
+  // Check if all dropdowns have a value
+  const allSelected = selectedProject && taskByProject && timeSheetValue;
 
   useEffect(() => {
     getProjects()
@@ -71,21 +74,23 @@ const Tracker = () => {
   console.log(task)
   async function handleProjectChange(e) {
     const value = e.target.value;
+    setSelectedProject(value);
     console.log(value);
-    await getTask(value);
 
+    await getTask(value)
 
   }
   async function handleTaskByProject(e) {
     const value = e.target.value;
+    setTaskByProject(value);
     console.log(value);
-
 
     await getTimeSheetList(value)
 
   }
   async function handleTimeSheet(e) {
     const value = e.target.value;
+    setTimeSheetValue(value);
     console.log(value);
 
     // await getTimeSheetList(value)
@@ -106,11 +111,10 @@ const Tracker = () => {
     return `${h}:${m}:${s}`;
   };
 
-
   // ------------- RANDOM INTERVAL ----------
   const getRandomDelay = () => {
-    const min = 3 * 60 * 1000;   // 3 min
-    const max = 10 * 60 * 1000;  // 10 min
+    const min = 1 * 60 * 1000;   // 3 min
+    const max = 2 * 60 * 1000;  // 10 min
     return Math.floor(Math.random() * (max - min + 1)) + min;
   };
 
@@ -142,9 +146,29 @@ const Tracker = () => {
     }, delay);
   };
 
+
+  //missing dropdown
+  const getMissingSelections = () => {
+    const missing = [];
+
+    if (!selectedProject) missing.push("project");
+    if (!taskByProject) missing.push("task");
+    if (!timeSheetValue) missing.push("timesheet");
+
+    return missing;
+  };
+
+
   // ------------ BUTTONS ------------------
   const handleStart = () => {
     console.log("Start clicked");
+    const missing = getMissingSelections();
+
+    if (missing.length > 0) {
+      toast.error(`Please select ${missing.join(" and ")}`);
+      return;
+    }
+
 
     if (!timerIntervalRef.current) {
       timerIntervalRef.current = setInterval(() => {
@@ -156,6 +180,12 @@ const Tracker = () => {
   };
 
   const handlePause = () => {
+    const missing = getMissingSelections();
+
+    if (missing.length > 0) {
+      toast.error(`Please select ${missing.join(" and ")}`);
+      return;
+    }
     clearInterval(timerIntervalRef.current);
     clearTimeout(screenshotTimeoutRef.current);
 
@@ -164,6 +194,12 @@ const Tracker = () => {
   };
 
   const handleStop = () => {
+    const missing = getMissingSelections();
+
+    if (missing.length > 0) {
+      toast.error(`Please select ${missing.join(" and ")}`);
+      return;
+    }
     handlePause();
     setSeconds(0);
     setScreenshots([]);
@@ -186,7 +222,7 @@ const Tracker = () => {
 >>>>>>> 1a9c89b (tracker changes)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100 flex items-center justify-center px-4">
+    <div className=" min-h-screen bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100 flex items-center justify-center px-4">
 
       <div className="bg-white w-full max-w-5xl rounded-3xl shadow-xl p-6 md:p-8">
 
@@ -482,23 +518,38 @@ const Tracker = () => {
             </select>
           </div>
 
+
+          {/* add memo */}
+          <div className="mb-6 w-full">
+            <label className="block text-gray-700 font-medium mb-2" htmlFor="taskDescription">
+              Task Description
+            </label>
+            <textarea
+              id="taskDescription"
+              placeholder="Write details about the task..."
+              className="w-full min-h-[100px] p-4 rounded-2xl border border-gray-300 shadow-sm bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 resize-none"
+            />
+          </div>
+
+
+
           {/* Buttons */}
           <div className="flex justify-center gap-6 mb-6">
             <button
               onClick={handleStart}
-              className="w-20 h-20 rounded-full bg-green-200 border font-bold shadow-md hover:-translate-y-0.5 hover:shadow-lg transition">
+              className="w-20 cursor-pointer h-20 rounded-full bg-green-200 border font-bold shadow-md hover:-translate-y-0.5 hover:shadow-lg transition">
               Start
             </button>
 
             <button
               onClick={handlePause}
-              className="w-20 h-20 rounded-full bg-yellow-200 border font-bold shadow-md hover:-translate-y-0.5 hover:shadow-lg transition">
+              className="w-20 h-20 cursor-pointer rounded-full bg-yellow-200 border font-bold shadow-md hover:-translate-y-0.5 hover:shadow-lg transition">
               Pause
             </button>
 
             <button
               onClick={handleStop}
-              className="w-20 h-20 rounded-full bg-red-200 border font-bold shadow-md hover:-translate-y-0.5 hover:shadow-lg transition">
+              className="w-20 h-20 cursor-pointer rounded-full bg-red-200 border font-bold shadow-md hover:-translate-y-0.5 hover:shadow-lg transition">
               Stop
             </button>
           </div>
@@ -537,8 +588,11 @@ const Tracker = () => {
     </div>
 
   );
+<<<<<<< HEAD
 
 >>>>>>> 1a9c89b (tracker changes)
+=======
+>>>>>>> 7e5cfd4 (add validation on buttons)
 };
 
 export default Tracker;
