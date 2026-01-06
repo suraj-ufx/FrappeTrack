@@ -208,13 +208,13 @@ const Tracker = () => {
     }, []);
 
     return (
-        <div className=" bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100 flex items-center justify-center min-h-screen">
+        <div className="min-h-screen bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100 flex items-center justify-center px-4">
 
             <div className="bg-white w-full max-w-5xl rounded-3xl shadow-xl p-6 md:p-8">
 
                 {/* Header */}
                 <div className="text-center mb-8">
-                    <h2 className="text-3xl font-bold text-gray-800">Welcome {user?.name.split(" ")[0]}</h2>
+                    <h2 className="text-3xl font-bold text-gray-800">Welcome</h2>
                     <h2 id="username" className="text-xl text-gray-500 mt-1"></h2>
                 </div>
 
