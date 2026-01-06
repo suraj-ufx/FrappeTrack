@@ -6,13 +6,10 @@ const Tracker = () => {
   const [seconds, setSeconds] = useState(0);
   const [screenshots, setScreenshots] = useState([]);
 
-  const { getProjects, getTask, getTimeSheetList, projects, task, timeSheet } = useAuthStore()
+  const { getProjects, getTask, getTimeSheetList, projects, task, timeSheet , user} = useAuthStore()
   const [selectedProject, setSelectedProject] = useState(null);
   const [taskByProject, setTaskByProject] = useState(null)
   const [timeSheetValue, setTimeSheetValue] = useState(null)
-
-  // Check if all dropdowns have a value
-  const allSelected = selectedProject && taskByProject && timeSheetValue;
 
   useEffect(() => {
     getProjects()
@@ -171,7 +168,7 @@ const Tracker = () => {
 
         {/* Header */}
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-800">Welcome</h2>
+          <h2 className="text-3xl font-bold text-gray-800">Welcome {user?.name.split(" ")[0]}</h2>
           <h2 id="username" className="text-xl text-gray-500 mt-1"></h2>
         </div>
 
@@ -229,6 +226,7 @@ const Tracker = () => {
             <textarea
               id="taskDescription"
               placeholder="Write details about the task..."
+              required
               className="w-full min-h-[100px] p-4 rounded-2xl border border-gray-300 shadow-sm bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 resize-none"
             />
           </div>
