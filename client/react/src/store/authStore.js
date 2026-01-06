@@ -178,6 +178,7 @@ export const useAuthStore = create((set) => ({
             console.error("Projects fetch failed:", err);
         }
     },
+
     stopHandler: async (data) => {
         try {
             const [{ apiKey }, { apiSecret }] = JSON.parse(localStorage.getItem("creds"));
@@ -219,6 +220,7 @@ export const useAuthStore = create((set) => ({
             )
         }
     }
+
     // logout: async () => {
     //     set({ user: null, isAuthenticated: false });
     // },
