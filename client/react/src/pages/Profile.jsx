@@ -23,7 +23,6 @@ const Profile = () => {
   //     image: "/assests/profile.webp", // or default avatar
   //   });
   // }, []);
-
   const handleLogout = () => {
     console.log("Logout clicked");
     // clear cookies / localStorage / redirect
@@ -40,7 +39,7 @@ const Profile = () => {
         {/* Profile Image */}
         <div className="relative flex justify-center mt-16">
           <img
-            src={user.employee.image || fav}
+            src={user.employee.image || fav || ""}
             alt="Profile"
             className="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover bg-gray-200"
           />
