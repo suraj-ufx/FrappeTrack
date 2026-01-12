@@ -11,15 +11,15 @@ export const useAuthStore = create((set) => ({
     error: null,
 
     checkAuth: async () => {
-        set({ isCheckingAuth: true })
-        try {
-            const res = await axiosInstance("some endpoint");
-            set({ user: res.data.user });
+        // set({ isCheckingAuth: true })
+        // try {
+        //     const res = await axiosInstance.get("some endpoint");
+        //     set({ user: res.data.user });
 
-        } catch (error) {
-            console.error("Unauthorized user:", error);
-            set({user: null, isCheckingAuth: false})
-        }
+        // } catch (error) {
+        //     console.error("Unauthorized user:", error);
+        //     set({user: null, isCheckingAuth: false})
+        // }
     },
     setIsAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
     // login: async (apiKey, apiSecret) => {
@@ -79,6 +79,9 @@ export const useAuthStore = create((set) => ({
             console.log("Profile response:", data);
 
             if (data?.message?.success) {
+                const token = data.message.token
+                console.log(token)
+                await window.electronAPI.saveCookies(token)
                 localStorage.removeItem("creds")
                 set({ user: data.message.user, isAuthenticated: true });
 

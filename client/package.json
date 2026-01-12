@@ -14,7 +14,9 @@
     "electron": "^25.1.0"
   },
   "dependencies": {
+    "cookie-parser": "^1.4.7",
     "electron-store": "^8.2.0",
+    "express": "^5.2.1",
     "jwt-decode": "^4.0.0"
   }
 }
