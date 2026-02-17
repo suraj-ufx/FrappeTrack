@@ -48,8 +48,8 @@
     "publish": [
       {
         "provider": "github",
-        "owner": "hrutikkk",
-        "repo": "FrappeTrack_project"
+        "owner": "rajbhar-suraj",
+        "repo": "FrappeTrack"
       }
     ],
     "win": {
